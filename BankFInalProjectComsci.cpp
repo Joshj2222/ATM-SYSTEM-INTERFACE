@@ -1,9 +1,12 @@
+// Created by Andrew Guerra and Joshua Jaime
+//COMPSCI 2 39452
 #include <iostream>
 #include <iomanip>
 #include <string>
 #include <vector>
 #include <limits>
-
+// ================ BANK ACCOUNT CLASSES ================
+// Here is where the base class for all accounts starts
 using namespace std;
 
 class BankAccount {
