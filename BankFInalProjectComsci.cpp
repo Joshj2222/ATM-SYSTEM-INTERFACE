@@ -1,5 +1,12 @@
-// Created by Andrew Guerra and Joshua Jaime
-//COMPSCI 2 39452
+//============================================================================================
+//Project Title  : ATM SYSTEM INTERFACE 
+//Authors        : [Andrew Guerra] [Joshua Jaime] 
+//Date           : Started 04/29/25 Finished 05/12/25
+//Course         : COMPSCI 2  39452
+// ===========================================================================================
+// Project Description : This project simulates a simplified ATM System Interface in C++.
+// Features: The ability to create an account with password creation to protect your account. Has 3 accounts (Checkings, Savings, credit).
+// Allows the user to borrow money from their credit account (up to 1000$) and allows the user to repay the credit balance and view all account balances and available credit 
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -23,12 +30,12 @@ public:
     string getAccountNumber() const;
 };
 
-
+// This will intialize the account with a number and a balance.
 BankAccount::BankAccount(string accNum, double initialBalance) {
     accountNumber = accNum;
     balance = initialBalance;
 }
-
+//Deposit can only be a positve amount
 bool BankAccount::deposit(double amount) {
     if (amount > 0) {
         balance += amount;
@@ -39,7 +46,7 @@ bool BankAccount::deposit(double amount) {
         return false;
     }
 }
-
+// Withdraw will fail if the balance has a insufficient balance.
 bool BankAccount::withdraw(double amount) {
     if (amount > balance) {
         cout << "ERROR: Amount exceeds your balance" << endl;
@@ -58,7 +65,7 @@ double BankAccount::getBalance() const {
 string BankAccount::getAccountNumber() const {
     return accountNumber;
 }
-
+// ==================== CHECKING ACCOUNT =====================
 class CheckingAccount : public BankAccount {
 public:
     CheckingAccount(string accNum, double initialBalance);
@@ -76,7 +83,7 @@ bool CheckingAccount::deposit(double amount) {
 bool CheckingAccount::withdraw(double amount) {
     return BankAccount::withdraw(amount);
 }
-
+// =============== SAVINGS ACCOUNT ===================
 class SavingsAccount : public BankAccount {
 public:
     SavingsAccount(string accNum, double initialBalance);
@@ -94,17 +101,17 @@ bool SavingsAccount::deposit(double amount) {
 bool SavingsAccount::withdraw(double amount) {
     return BankAccount::withdraw(amount);
 }
-
+// ================== CREDIT ACCOUNT ==========================
 class CreditAccount : public BankAccount {
 private:
-    double creditLimit;
-    double creditOwed;
+    double creditLimit; // Here is our max credit 
+    double creditOwed;  // Here is how much the user owes.
 
 public:
     CreditAccount(string accNum, double creditBalance);
-    bool deposit(double amount) override;
-    double getCreditOwed() const;
-    double getAvailableCredit() const;
+    bool deposit(double amount) override; // Deposit = Repayment
+    double getCreditOwed() const; // Balance logic
+    double getAvailableCredit() const; // Balance logic
 };
 
 CreditAccount::CreditAccount(string accNum, double creditBalance)
@@ -117,7 +124,7 @@ CreditAccount::CreditAccount(string accNum, double creditBalance)
         creditOwed = creditBalance;
     }
 }
-
+// Whenever you deposit to your credit account it means that your paying off your debt.
 bool CreditAccount::deposit(double amount) {
     if (amount > creditOwed) {
         cout << "ERROR: Amount deposited exceeds credit owed." << endl;
@@ -136,7 +143,7 @@ double CreditAccount::getCreditOwed() const {
 double CreditAccount::getAvailableCredit() const {
     return creditLimit - creditOwed;
 }
-
+// ==================== USER CLASS =========================
 class User {
 private:
     string username;
@@ -151,11 +158,11 @@ public:
           checking(uname + "_C", 0),
           savings(uname + "_S", 0),
           credit(uname + "_CR", 0) {}
-
+// Verifiy credentials
     bool verifyPassword(string pass) const {
         return pass == password;
     }
-
+// Displays all balances for ALL account types.
     void displayAccounts() const {
         cout << "Checking: $" << checking.getBalance() << endl;
         cout << "Savings: $" << savings.getBalance() << endl;
@@ -177,12 +184,12 @@ public:
         }
     }
 };
-
+// ===================== BANK CLASS ========================
 class Bank {
 private:
     vector<User> users;
     User* currentUser = nullptr;
-
+// Account creation.
 public:
     void createAccount() {
         string uname, pass;
@@ -194,7 +201,7 @@ public:
         users.emplace_back(uname, pass);
         cout << "Account created successfully!\n";
     }
-
+// Log in with a user and password.
     bool login(string username, string password) {
         for (auto& user : users) {
             if (user.verifyPassword(password)) {
@@ -206,12 +213,12 @@ public:
         cout << "Login failed: Incorrect username or password.\n";
         return false;
     }
-
+// Logout user
     void logout() {
         currentUser = nullptr;
         cout << "Logged out successfully.\n";
     }
-
+// To deposit funds to checkings/savings/credit.
     void depositMoney() {
         if (!currentUser) {
             cout << "Please log in first.\n";
@@ -235,7 +242,7 @@ public:
             cout << "Invalid account type.\n";
         }
     }
-
+// Withdraw funds from ONLY your checking/savings account.
     void withdrawMoney() {
         if (!currentUser) {
             cout << "Please log in first.\n";
@@ -259,7 +266,7 @@ public:
             cout << "Invalid account type.\n";
         }
     }
-
+// Pay credit balance.
     void payCredit() {
         if (!currentUser) {
             cout << "Please log in first.\n";
@@ -271,7 +278,7 @@ public:
         cin >> amount;
         currentUser->getCredit().deposit(amount);  
     }
-
+// View your current account balance.
     void displayAccounts() {
         if (!currentUser) {
             cout << "Please log in first.\n";
@@ -280,7 +287,7 @@ public:
 
         currentUser->displayAccounts();
     }
-
+// Main application loop.
     void run() {
         bool running = true;
 
@@ -338,7 +345,7 @@ public:
         }
     }
 };
-
+// ===================== MAIN ==========================
 int main()
 {
     Bank bank;
